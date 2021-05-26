@@ -1,0 +1,14 @@
+{
+  "targets": {
+    "school-chat-76574": {
+      "hosting": {
+        "app": [
+          "school-chat-76574"
+        ]
+      }
+    }
+  },
+  "projects": {
+    "default": "school-chat-76574"
+  }
+}

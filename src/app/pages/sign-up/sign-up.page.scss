@@ -54,7 +54,9 @@ ion-item {
     --highlight-color-valid: #215ab7;
 
     font-size: 13px;
-    ion-input {
+    ion-input,
+    ion-label,
+    ion-select {
         color: #74787e;
         font-size: 13px;
         ion-icon {

@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class SignUpPage implements OnInit {
   validationMessages = {
-    nickname: [{ type: "required", message: "nicknameRequired" }],
+    name: [{ type: "required", message: "nameRequired" }],
     email: [
       { type: "required", message: "emailRequired" },
       { type: "pattern", message: "invalidEmail" }
@@ -30,9 +30,6 @@ export class SignUpPage implements OnInit {
 
   ngOnInit() {
     this.signUpForm = this.formBuilder.group({
-      nickname: new FormControl('', Validators.compose([
-        Validators.required
-      ])),
       email: new FormControl('', Validators.compose([
         Validators.required,
         Validators.email

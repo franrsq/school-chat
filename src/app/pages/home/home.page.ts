@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ModalController } from '@ionic/angular';
+import { ProfilePage } from 'src/app/modals/profile/profile.page';
 import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
@@ -6,8 +8,19 @@ import { AuthService } from 'src/app/services/auth.service';
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
 })
-export class HomePage {
+export class HomePage implements OnInit {
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private modalController: ModalController) { }
+
+  ngOnInit() {
+    this.authService.getUserData().then(async (data) => {
+      if (!data) {
+        const modal = await this.modalController.create({
+          component: ProfilePage
+        });
+        modal.present();
+      }
+    });
+  }
 
 }

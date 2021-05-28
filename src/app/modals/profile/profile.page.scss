@@ -1,0 +1,27 @@
+.error_message {
+    font-size: 10px;
+    font-weight: 200;
+    color: var(--ion-color-danger);
+}
+
+ion-avatar {
+    width: 128px;
+    height: 128px;
+    position: relative;
+    display: block;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.btn-file {
+    --padding-start: 0;
+    --padding-end: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

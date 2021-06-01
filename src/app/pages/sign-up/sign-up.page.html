@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaulthref="login" text="">
+      <ion-back-button defaultHref="login">
       </ion-back-button>
     </ion-buttons>
   </ion-toolbar>
@@ -23,45 +23,17 @@
     <form [formGroup]="signUpForm" (ngSubmit)="registerUser(signUpForm.value)">
       <ion-card-content>
         <ion-item>
-          <ion-input name="nickname" type="text" placeholder="{{ 'nickname' | translate }}" formControlName="nickname">
-            <ion-icon name="person-outline"></ion-icon>
-          </ion-input>
-        </ion-item>
-        <div>
-          <ng-container *ngFor="let validation of validationMessages.nickname">
-
-            <div class="error_message"
-              *ngIf="signUpForm.get('nickname').hasError(validation.type) && (signUpForm.get('nickname').dirty || signUpForm.get('nickname').touched)">
-              {{validation.message | translate}}
-            </div>
-
-          </ng-container>
-
-        </div>
-        <div>
-          <ng-container *ngFor="let validation of validationMessages.phone">
-
-            <div class="error_message"
-              *ngIf="signUpForm.get('phone').hasError(validation.type) && (signUpForm.get('phone').dirty || signUpForm.get('phone').touched)">
-              {{validation.message | translate}}
-            </div>
-
-          </ng-container>
-
-        </div>
-        <ion-item>
           <ion-input name="email" type="text" placeholder="Email" formControlName="email">
             <ion-icon name="mail-outline"></ion-icon>
           </ion-input>
         </ion-item>
         <ng-container *ngFor="let validation of validationMessages.email">
-
           <div class="error_message"
             *ngIf="signUpForm.get('email').hasError(validation.type) && (signUpForm.get('email').dirty || signUpForm.get('email').touched)">
             {{validation.message | translate}}
           </div>
-
         </ng-container>
+
         <ion-item>
           <ion-input name="password" type="password" placeholder="************" formControlName="password">
             <ion-icon name="lock-closed"></ion-icon>

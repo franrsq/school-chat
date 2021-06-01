@@ -1,0 +1,56 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>{{ 'profile' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form [formGroup]="profileForm">
+    <input style="display:none;" type="file" accept="image/*" multiple="false" #chooseFile
+      (change)="fileSelected($event)" />
+    <ion-avatar>
+      <ion-img [src]="image" *ngIf="image; else defAvatar"></ion-img>
+      <ng-template #defAvatar>
+        <ion-img src="assets/images/def_avatar.svg"></ion-img>
+      </ng-template>
+      <ion-button class="btn-file" shape="round" (click)="chooseFile.click()">
+        <ion-icon name="camera"></ion-icon>
+      </ion-button>
+    </ion-avatar>
+    <ion-item>
+      <ion-icon style="margin-right: 8px;" name="person-outline"></ion-icon>
+      <ion-input name="name" type="text" placeholder="{{ 'name' | translate }}" formControlName="name">
+      </ion-input>
+    </ion-item>
+    <div>
+      <ng-container *ngFor="let validation of validationMessages.name">
+        <div class="error_message"
+          *ngIf="profileForm.get('name').hasError(validation.type) && (profileForm.get('name').dirty || profileForm.get('name').touched)">
+          {{validation.message | translate}}
+        </div>
+      </ng-container>
+    </div>
+
+    <ion-item>
+      <ion-icon style="margin-right: 8px;" name="people-outline"></ion-icon>
+      <ion-label>{{'accountType' | translate}}</ion-label>
+      <ion-select name="role" formControlName="role" value="regular" okText="{{ 'okText' | translate }}"
+        cancelText="{{ 'cancelText' | translate }}">
+        <ion-select-option value="regular">{{'regularAccount' | translate}}</ion-select-option>
+        <ion-select-option value="teacher">{{'teacherAccount' | translate}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  </form>
+
+  <div class="ion-padding-top ion-margin-horizontal" *ngIf="percentageVal | async as percentage">
+    <ion-label>{{ 'uploadingImage' | translate }}</ion-label>
+    <ion-progress-bar value="{{ percentage / 100 }}"></ion-progress-bar>
+  </div>
+</ion-content>
+
+<ion-row>
+  <ion-col>
+    <ion-button expand="block" type="submit" [disabled]="!profileForm.valid" (click)="onSave(profileForm.value)">
+      {{ 'save' | translate }}</ion-button>
+  </ion-col>
+</ion-row>

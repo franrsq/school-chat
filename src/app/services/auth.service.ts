@@ -1,8 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { map } from 'rxjs/operators';
 import firebase from 'firebase/app';
 
 @Injectable({
@@ -12,12 +14,16 @@ export class AuthService {
 
   constructor(
     public auth: AngularFireAuth, private router: Router,
-    private ngZone: NgZone, private googlePlus: GooglePlus
+    private ngZone: NgZone, private googlePlus: GooglePlus,
+    private firestore: AngularFirestore
   ) {
     this.auth.onAuthStateChanged(async (user) => {
       // User sign out
       if (!user) {
         this.ngZone.run(() => {
+          if (this.router.url == '/sign-up' || this.router.url == '/forgot-password') {
+            return;
+          }
           this.router.navigate(['/login']);
         });
         return;
@@ -66,5 +72,24 @@ export class AuthService {
 
   logout() {
     return this.auth.signOut();
+  }
+
+  async getCurrentUser() {
+    return await this.auth.currentUser;
+  }
+
+  async getUserData() {
+    return this.firestore.collection('users').doc((await this.getCurrentUser()).uid).get().pipe(
+      map(data => data.data())
+    ).toPromise();
+  }
+
+  async saveUserData(photoURL: string, name: string, role: string) {
+    let user = await this.getCurrentUser();
+    return this.firestore.collection('users').doc(user.uid).set({
+      name: name,
+      photoURL: photoURL ? photoURL : user.photoURL,
+      role: role
+    });
   }
 }

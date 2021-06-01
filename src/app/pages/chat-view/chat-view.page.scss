@@ -14,16 +14,43 @@
     margin-top: 20px;
 }
 
-ion-label{
-    margin-left: 15px;
+.message{
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 4px;
+    white-space: pre-wrap;
 }
 
-.text-input {
-    background-color: #fff;
-    border-radius: 5px;
-    padding: 5px;
-  }
+.other-message{
+    background: var(--ion-color-tertiary);
+    color: #ffffff;
+}
 
-  ion-textarea{
-      text-align: center;
-  }
+.my-message{
+    background: var(--ion-color-secondary);
+    color: #ffffff;
+}
+
+.time{
+    color:#dfdfdf;
+    float: right;
+    font-size: small;
+}
+
+.message-input{
+    width: 100%;
+    border: 1px solid var(--ion-color-medium);
+    border-radius: 10px;
+    resize: none;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.msg-btn{
+    --padding-start: 0.5em;
+    --padding-end: 0.5em;
+}
+
+ion-textarea{
+    text-align: center;
+}

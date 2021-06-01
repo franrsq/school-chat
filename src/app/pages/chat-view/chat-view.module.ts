@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AutosizeModule } from 'ngx-autosize';
 
 import { IonicModule } from '@ionic/angular';
 
@@ -13,8 +14,9 @@ import { ChatViewPage } from './chat-view.page';
     CommonModule,
     FormsModule,
     IonicModule,
-    ChatViewPageRoutingModule
+    ChatViewPageRoutingModule,
+    AutosizeModule
   ],
   declarations: [ChatViewPage]
 })
-export class ChatViewPageModule {}
+export class ChatViewPageModule { }

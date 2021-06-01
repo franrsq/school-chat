@@ -1,24 +1,60 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Chats
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">
+        <ion-icon name="log-out"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+  <ion-list *ngIf="items.length > 0; else empty">
+    <ion-item *ngFor="let item of items" button (click)="hola(item.name)">
+     <ng-container>
+        <ion-label>
+          <div class="flexStile">
+            <ion-avatar>
+              <ion-img [src]="item.image"></ion-img>
+            </ion-avatar>
+            <h1 class="nombre">{{item.name}}</h1>
+          </div>
+        </ion-label>
+      </ng-container>
+    </ion-item>
+  </ion-list>
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+  <ng-template #empty>
+    <div style="display: flex; height: 100%; align-items: center;">
+      <div class="viewCenter">
+        <div class="iconEmpty">
+          <ion-icon class="iconSize" name="cloud-offline-outline"></ion-icon>
+        </div>
 
-  <ion-button (click)="authService.logout()">
-    Adiós
-  </ion-button>
+        <div class="title-style">
+          No se ha unido a ningun chat.
+          <br>
+          Únete a uno.
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button>
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+    <ion-fab-list side="top">
+      <ion-fab-button (click)="createRoomDialog()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+      <ion-fab-button (click)="joinRoomDialog()">
+        <ion-icon name="person-add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab-list>
+  </ion-fab>
+
 </ion-content>

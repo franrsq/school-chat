@@ -1,0 +1,75 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="changePath('home')">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{nameGroup}}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="changePath('to-do-list')">
+        <ion-icon name="checkbox-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="items.length > 0; else empty">
+    <ion-item *ngFor="let item of items">
+      <ng-container *ngIf="item">
+        <ion-avatar>
+          <ion-img [src]="item.image"></ion-img>
+        </ion-avatar>
+        <ion-label>
+          <ion-text>
+            <h3>{{item.user}}</h3>
+            {{item.message}}
+          </ion-text>
+        </ion-label>
+
+      </ng-container>
+
+    </ion-item>
+  </ion-list>
+
+  <ng-template #empty>
+    <div style="display: flex; height: 100%; align-items: center;">
+      <div class="viewCenter">
+        <div class="iconEmpty">
+          <ion-icon class="iconSize" name="cloud-offline-outline"></ion-icon>
+        </div>
+
+        <div class="title-style">
+          No han mandado ningún mensaje
+          <br>
+          Espera a que el profesor envíe uno.
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-content>
+
+<ng-container *ngIf="onlyRead; else canWrite">
+  <ion-footer no-border>
+    <ion-toolbar color="gray">
+      <ion-textarea placeholder="Solo el profesor puede enviar mensajes">
+      </ion-textarea>
+    </ion-toolbar>
+  </ion-footer>
+</ng-container>
+
+<ng-template #canWrite>
+  <ion-footer no-border>
+    <ion-toolbar color="primary">
+      <ion-textarea [(ngModel)]="input" placeholder="Enter your message" name="message"></ion-textarea>
+      <ion-buttons slot="end">
+        <ion-button (click)="doSend()">
+          <ion-icon name="send" color="light"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-footer>
+</ng-template>

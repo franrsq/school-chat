@@ -1,0 +1,29 @@
+.iconSize {
+    transform: scale(3);
+}
+
+.viewCenter {
+    text-align: center;
+    height: fit-content;
+    width: fit-content;
+    display: block;
+    margin: auto;
+}
+
+.title-style {
+    margin-top: 20px;
+}
+
+ion-label{
+    margin-left: 15px;
+}
+
+.text-input {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 5px;
+  }
+
+  ion-textarea{
+      text-align: center;
+  }

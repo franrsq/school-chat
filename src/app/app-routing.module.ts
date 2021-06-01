@@ -31,7 +31,15 @@ const routes: Routes = [
   {
     path: 'forgot-password',
     loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+  },  {
+    path: 'to-do-list',
+    loadChildren: () => import('./pages/to-do-list/to-do-list.module').then( m => m.ToDoListPageModule)
   },
+  {
+    path: 'chat-view',
+    loadChildren: () => import('./pages/chat-view/chat-view.module').then( m => m.ChatViewPageModule)
+  },
+
 ];
 
 @NgModule({

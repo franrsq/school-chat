@@ -29,6 +29,7 @@
     "save": "Save",
     "dataSaved": "Data saved successfully",
     "uploadingImage": "Uploading image",
+    "newChat": "New chat",
     
     "auth/user-disabled": "User has been disabled",
     "auth/user-not-found": "User does not exists",

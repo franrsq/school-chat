@@ -78,10 +78,15 @@ export class AuthService {
     return await this.auth.currentUser;
   }
 
+  async observeUserData() {
+    return this.firestore.collection('users').doc((await this.getCurrentUser()).uid).valueChanges();
+  }
+
   async getUserData() {
-    return this.firestore.collection('users').doc((await this.getCurrentUser()).uid).get().pipe(
-      map(data => data.data())
-    ).toPromise();
+    return this.firestore.collection('users').doc((await this.getCurrentUser()).uid)
+      .get({ source: 'server' }).pipe(
+        map(snap => snap.data())
+      ).toPromise();
   }
 
   async saveUserData(photoURL: string, name: string, role: string) {

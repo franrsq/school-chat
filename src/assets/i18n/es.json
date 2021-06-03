@@ -29,6 +29,7 @@
     "save": "Guardar",
     "dataSaved": "Datos guardados exitosamente",
     "uploadingImage": "Subiendo imagen",
+    "newChat": "Nuevo chat",
     
     "auth/user-disabled": "El usuario ha sido deshabilitado",
     "auth/user-not-found": "El usuario no existe",

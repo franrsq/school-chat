@@ -5,5 +5,9 @@ service cloud.firestore {
       allow read: if true;
       allow write: if request.auth.uid == user;
     }
+    match /groups/{group} {
+      allow read: if request.auth.uid != null;
+      allow write: if false;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private authService: AuthService,
     private router: Router, private toastController: ToastController,
-    private translateService: TranslateService) { }
+    private translateService: TranslateService, private zone: NgZone) { }
 
   ngOnInit() {
     this.formLogin = this.formBuilder.group({
@@ -63,7 +63,6 @@ export class LoginPage implements OnInit {
           color: "danger"
         });
         toast.present();
-        this.router.navigate(['/home']);
       });
   }
 
@@ -77,7 +76,7 @@ export class LoginPage implements OnInit {
           color: "success"
         });
         toast.present();
-        this.router.navigateByUrl('/home', { replaceUrl: true });
+        this.zone.run(() => this.router.navigateByUrl('/home'));
       })
       .catch(async (error) => {
         let errorMsg = await this.translateService.get(error.code).toPromise();

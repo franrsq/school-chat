@@ -4,7 +4,7 @@
       Chats
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="logout()">
+      <ion-button (click)="authService.logout()">
         <ion-icon name="log-out"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -12,18 +12,16 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-list *ngIf="items.length > 0; else empty">
-    <ion-item *ngFor="let item of items" button (click)="hola(item.name)">
-     <ng-container>
-        <ion-label>
-          <div class="flexStile">
-            <ion-avatar>
-              <ion-img [src]="item.image"></ion-img>
-            </ion-avatar>
-            <h1 class="nombre">{{item.name}}</h1>
-          </div>
-        </ion-label>
-      </ng-container>
+  <ion-list *ngIf="items; else empty">
+    <ion-item *ngFor="let item of items | async" button (click)="hola(item.name)">
+      <ion-label>
+        <div class="flexStile">
+          <ion-avatar>
+            <ion-img [src]="item.imageURL ? item.imageURL : 'assets/images/def_avatar.svg'"></ion-img>
+          </ion-avatar>
+          <h1 class="nombre">{{item.name}}</h1>
+        </div>
+      </ion-label>
     </ion-item>
   </ion-list>
 
@@ -44,17 +42,12 @@
   </ng-template>
 
   <ion-fab vertical="bottom" horizontal="end">
-    <ion-fab-button>
+    <ion-fab-button *ngIf="isTeacher === true" (click)="showCreateGroup()">
       <ion-icon name="add-outline"></ion-icon>
     </ion-fab-button>
-    <ion-fab-list side="top">
-      <ion-fab-button (click)="createRoomDialog()">
-        <ion-icon name="add"></ion-icon>
-      </ion-fab-button>
-      <ion-fab-button (click)="joinRoomDialog()">
-        <ion-icon name="person-add"></ion-icon>
-      </ion-fab-button>
-    </ion-fab-list>
+    <ion-fab-button *ngIf="isTeacher === false" (click)="showJoinChat()">
+      <ion-icon name="enter-outline"></ion-icon>
+    </ion-fab-button>
   </ion-fab>
 
 </ion-content>

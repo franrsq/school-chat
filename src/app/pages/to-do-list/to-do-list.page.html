@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="changePath('home')">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title>{{nameGroup}}</ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button (click)="changePath('chat-view')">
+        <ion-icon name="chatbubbles"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="items.length > 0; else empty">
+    <ion-item *ngFor="let item of items">
+      <ng-container *ngIf="item">
+
+        <ion-label>
+          <ion-checkbox color="primary"></ion-checkbox>
+
+        </ion-label>
+        <ion-label>
+          <ion-text> {{item.message}} </ion-text>
+        </ion-label>
+
+      </ng-container>
+
+    </ion-item>
+  </ion-list>
+
+  <ng-template #empty>
+    <div style="display: flex; height: 100%; align-items: center;">
+      <div class="viewCenter">
+        <div class="iconEmpty">
+          <ion-icon class="iconSize" name="cloud-offline-outline"></ion-icon>
+        </div>
+
+        <div class="title-style">
+          No han mandado ningún mensaje
+          <br>
+          Espera a que el profesor envíe uno.
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-content>

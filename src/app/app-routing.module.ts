@@ -16,30 +16,38 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
+    loadChildren: () => import('./pages/login/login.module').then(m => m.LoginPageModule),
     ...canActivate(redirectLoggedToHome)
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
+    loadChildren: () => import('./pages/home/home.module').then(m => m.HomePageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'sign-up',
-    loadChildren: () => import('./pages/sign-up/sign-up.module').then( m => m.SignUpPageModule)
+    loadChildren: () => import('./pages/sign-up/sign-up.module').then(m => m.SignUpPageModule)
   },
   {
     path: 'forgot-password',
-    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then( m => m.ForgotPasswordPageModule)
+    loadChildren: () => import('./pages/forgot-password/forgot-password.module').then(m => m.ForgotPasswordPageModule)
   },
   {
     path: 'profile',
-    loadChildren: () => import('./modals/profile/profile.module').then( m => m.ProfilePageModule)
-  },  {
-    path: 'new-chat',
-    loadChildren: () => import('./modals/new-chat/new-chat.module').then( m => m.NewChatPageModule)
+    loadChildren: () => import('./modals/profile/profile.module').then(m => m.ProfilePageModule)
   },
-
+  {
+    path: 'new-chat',
+    loadChildren: () => import('./modals/new-chat/new-chat.module').then(m => m.NewChatPageModule)
+  },
+  {
+    path: 'to-do-list',
+    loadChildren: () => import('./pages/to-do-list/to-do-list.module').then(m => m.ToDoListPageModule)
+  },
+  {
+    path: 'chat-view',
+    loadChildren: () => import('./pages/chat-view/chat-view.module').then(m => m.ChatViewPageModule)
+  },
 ];
 
 @NgModule({

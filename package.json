@@ -24,10 +24,12 @@
     "@ionic-native/core": "^5.33.0",
     "@ionic-native/google-plus": "^5.33.0",
     "@ionic/angular": "^5.5.2",
+    "@ionic/lab": "^3.2.10",
     "@ngx-translate/core": "^13.0.0",
     "@ngx-translate/http-loader": "^6.0.0",
     "cordova-plugin-googleplus": "^8.5.2",
     "firebase": "^7.0 || ^8.0",
+    "ngx-autosize": "^1.8.4",
     "rxjs": "~6.6.0",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"

@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
 
-    <ion-title>{{nameGroup}}</ion-title>
+    <ion-title>{{chatData?.name}}</ion-title>
 
     <ion-buttons slot="end">
       <ion-button (click)="changePath('to-do-list')">
@@ -19,19 +19,41 @@
 <ion-content>
   <ion-grid>
     <ion-row *ngFor="let message of messages">
-      <ion-col size="9" *ngIf="currentUser !== message.user" class="message other-message">
-        <b>{{ message.user }}</b><br>
-        <span>{{ message.msg }}</span>
+      <ion-col size="9" *ngIf="currentUid !== message.sentBy" class="message other-message">
+        <b>{{ message.sentNameObs | async }}</b>
+        <br>
+        <ng-container *ngIf="message.mediaURL && message.mediaType">
+          <ion-img class="image" *ngIf="message.mediaType === 'image'; else video" [src]="message.mediaURL">
+          </ion-img>
+          <ng-template #video>
+            <video controls class="video">
+              <source [src]="message.mediaURL">
+            </video>
+          </ng-template>
+          <br>
+        </ng-container>
+        <span>{{ message.message }}</span>
         <div class="time" text-right> <br>
-          {{ message.createdtAt | date:'short' }}
+          {{ message.sentAt.seconds * 1000 | date:'short' }}
         </div>
       </ion-col>
 
-      <ion-col offset="3" *ngIf="currentUser === message.user" class="message my-message">
-        <b>{{ message.user }}</b><br>
-        <span>{{ message.msg }}</span>
+      <ion-col offset="3" *ngIf="currentUid === message.sentBy" class="message my-message">
+        <b>{{ message.sentNameObs | async }}</b>
+        <br>
+        <ng-container *ngIf="message.mediaURL && message.mediaType">
+          <ion-img class="image" *ngIf="message.mediaType === 'image'; else video" [src]="message.mediaURL">
+          </ion-img>
+          <ng-template #video>
+            <video controls class="video">
+              <source [src]="message.mediaURL">
+            </video>
+          </ng-template>
+          <br>
+        </ng-container>
+        <span>{{ message.message }}</span>
         <div class="time" text-right> <br>
-          {{ message.createdtAt | date:'short' }}
+          {{ message.sentAt.seconds * 1000 | date:'short' }}
         </div>
       </ion-col>
     </ion-row>

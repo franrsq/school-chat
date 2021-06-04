@@ -100,3 +100,75 @@ exports.joinChat = functions.https.onCall((data, context) => {
     );
   });
 });
+
+exports.sendMessage = functions.https.onCall((data, context) => {
+  const groupId = data.groupId;
+  const message = data.message;
+  const mediaURL = data.mediaURL;
+  const mediaType = data.mediaType;
+  if ((!(typeof message === 'string') || message.length === 0) ||
+    (!(typeof groupId === 'string') || groupId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "message" containing the message to send and "groupId" containing the group.');
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  const groupRef = db.collection('groups').doc(groupId);
+  const messageRef = db.collection('user-message').doc(groupId).collection('messages').doc();
+  return db.runTransaction(async (transaction) => {
+    const groupDoc = await transaction.get(groupRef);
+    if (!groupDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Group document does not exists');
+    }
+    if (!groupDoc.data().members.includes(context.auth.uid)) {
+      throw new functions.https.HttpsError('not-found', 'User is not part of the group');
+    }
+
+    transaction.create(messageRef, {
+      message: message,
+      mediaURL: mediaURL,
+      mediaType: mediaType,
+      sentAt: admin.firestore.Timestamp.fromDate(new Date()),
+      sentBy: context.auth.uid
+    });
+  });
+});
+
+exports.sendAdminMessage = functions.https.onCall((data, context) => {
+  const groupId = data.groupId;
+  const message = data.message;
+  const mediaURL = data.mediaURL;
+  const mediaType = data.mediaType;
+  if ((!(typeof message === 'string') || message.length === 0) ||
+    (!(typeof groupId === 'string') || groupId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "message" containing the message to send and "groupId" containing the group.');
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  const groupRef = db.collection('groups').doc(groupId);
+  const messageRef = db.collection('admin-message').doc(groupId).collection('messages').doc();
+  return db.runTransaction(async (transaction) => {
+    const groupDoc = await transaction.get(groupRef);
+    if (!groupDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Group document does not exists');
+    }
+    if (!groupDoc.data().admins.includes(context.auth.uid)) {
+      throw new functions.https.HttpsError('not-found', 'User is not admin of the group');
+    }
+
+    transaction.create(messageRef, {
+      message: message,
+      mediaURL: mediaURL,
+      mediaType: mediaType,
+      sentAt: admin.firestore.Timestamp.fromDate(new Date()),
+      sentBy: context.auth.uid
+    });
+  });
+});

@@ -13,7 +13,7 @@
 
 <ion-content [fullscreen]="true">
   <ion-list *ngIf="items; else empty">
-    <ion-item *ngFor="let item of items | async" button (click)="hola(item.name)">
+    <ion-item *ngFor="let item of items | async" button (click)="openChat(item.id)">
       <ion-label>
         <div class="flexStile">
           <ion-avatar>

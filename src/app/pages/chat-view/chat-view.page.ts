@@ -1,64 +1,58 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
-import { IonContent } from '@ionic/angular';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { IonContent, ViewDidEnter, ViewWillEnter, ViewWillLeave, IonList, IonGrid } from '@ionic/angular';
+import { AuthService } from 'src/app/services/auth.service';
+import { FirestoreService } from 'src/app/services/firestore.service';
 
 @Component({
   selector: 'app-chat-view',
   templateUrl: './chat-view.page.html',
   styleUrls: ['./chat-view.page.scss'],
 })
-export class ChatViewPage implements OnInit {
+export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
 
   image = 'https://sevilla.abc.es/gurme/wp-content/uploads/sites/24/2012/01/comida-rapida-casera.jpg'
-  nameGroup = "Nombre grupo";
+  chatData;
   onlyRead = false;
-  //items: Observable<any>[] = [];
-  items = [{ user: "JulioProfe", message: "Traer cuadernos", image: 'https://sevilla.abc.es/gurme/wp-content/uploads/sites/24/2012/01/comida-rapida-casera.jpg' },
-  { user: "JulioProfe", message: "Firmar examen de mate ", image: 'https://sevilla.abc.es/gurme/wp-content/uploads/sites/24/2012/01/comida-rapida-casera.jpg' }];
-  messages = [
-    {
-      user: 'simon',
-      createdtAt:1554090856000,
-      msg:'Hey whats up mate?'
-    },
-    {
-      user: 'max',
-      createdtAt:1554090856000,
-      msg:'Working on the Ionic mission, you?'
-    },
-    {
-      user: 'simon',
-      createdtAt:1554090856000,
-      msg:'Doing some new tutorial stuff'
-    }
-  ]
+  messages = []
 
-  currentUser='simon'
+  currentUid = 'simon'
   newMsg = ''
-  @ViewChild(IonContent) content:IonContent
+  @ViewChild(IonContent) content: IonContent
+
+  chatId;
 
   constructor(
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private firestoreService: FirestoreService,
+    private authService: AuthService
   ) { }
 
-  ngOnInit() {
+  async ionViewWillEnter() {
+    this.chatId = this.route.snapshot.paramMap.get('chatId');
+    this.currentUid = (await this.authService.getCurrentUser()).uid;
+    this.firestoreService.observeChatData(this.chatId).subscribe((chatData) => {
+      this.chatData = chatData;
+    });
+    this.firestoreService.observeChatMessages(this.chatId, false).subscribe(m => this.messages = m);
   }
 
-  changePath(path){
+  changePath(path) {
     this.router.navigate([path]);
   }
 
-  sendMessage(){
-    this.messages.push({
-      user:'simon',
-      createdtAt:new Date().getTime(),
-      msg:this.newMsg
-    });
+  sendMessage() {
+    let message = this.newMsg.trim();
+    if (message.length > 0) {
+      this.newMsg = '';
+    }
+    // TODO: ver admin
+    this.firestoreService.sendMessage(this.chatId, message).subscribe();
+  }
 
-    this.newMsg='';
-    setTimeout(()=>{
-      this.content.scrollToBottom(200);
-    });
-    
+  ionViewWillLeave() {
+    this.messages = null;
+    this.currentUid = null;
   }
 }

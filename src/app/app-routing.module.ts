@@ -34,19 +34,22 @@ const routes: Routes = [
   },
   {
     path: 'profile',
-    loadChildren: () => import('./modals/profile/profile.module').then(m => m.ProfilePageModule)
+    loadChildren: () => import('./modals/profile/profile.module').then(m => m.ProfilePageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'new-chat',
-    loadChildren: () => import('./modals/new-chat/new-chat.module').then(m => m.NewChatPageModule)
+    loadChildren: () => import('./modals/new-chat/new-chat.module').then(m => m.NewChatPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'to-do-list',
     loadChildren: () => import('./pages/to-do-list/to-do-list.module').then(m => m.ToDoListPageModule)
   },
   {
-    path: 'chat-view',
-    loadChildren: () => import('./pages/chat-view/chat-view.module').then(m => m.ChatViewPageModule)
+    path: 'chat-view/:chatId',
+    loadChildren: () => import('./pages/chat-view/chat-view.module').then(m => m.ChatViewPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
 ];
 

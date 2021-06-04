@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AlertController, ModalController, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -19,7 +20,8 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
 
   constructor(private authService: AuthService, private modalController: ModalController,
     private alertController: AlertController, private firestoreService: FirestoreService,
-    private toastController: ToastController, private translateService: TranslateService) { }
+    private toastController: ToastController, private translateService: TranslateService,
+    private router: Router) { }
 
   async ionViewWillEnter() {
     (await this.authService.observeUserData()).subscribe(async (data: any) => {
@@ -39,8 +41,8 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
     });
   }
 
-  hola(nombre) {
-    console.log(nombre)
+  openChat(chatId) {
+    this.router.navigate(['chat-view', chatId]);
   }
 
   async showCreateGroup() {

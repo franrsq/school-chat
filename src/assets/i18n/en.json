@@ -29,6 +29,7 @@
     "save": "Save",
     "dataSaved": "Data saved successfully",
     "uploadingImage": "Uploading image",
+    "uploadingMedia": "Uploading media file",
     "newChat": "New chat",
     
     "auth/user-disabled": "User has been disabled",

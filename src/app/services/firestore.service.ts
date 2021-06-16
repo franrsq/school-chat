@@ -36,8 +36,11 @@ export class FirestoreService {
     return this.firestore.collection('groups').doc(chatId).valueChanges();
   }
 
-  sendMessage(chatId: string, message: string, mediaURL: string = null, mediaType: string = null) {
-    return this.functions.httpsCallable('sendMessage')({
+  sendMessage(chatId: string, message: string, isTeacher,
+    mediaURL: string = null, mediaType: string = null) {
+
+    const functionName = isTeacher ? 'sendAdminMessage' : 'sendMessage';
+    return this.functions.httpsCallable(functionName)({
       groupId: chatId,
       message: message,
       mediaURL: mediaURL,

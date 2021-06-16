@@ -82,7 +82,7 @@ export class AuthService {
     return this.firestore.collection('users').doc((await this.getCurrentUser()).uid).valueChanges();
   }
 
-  async getUserData() {
+  async getUserData(): Promise<any> {
     return this.firestore.collection('users').doc((await this.getCurrentUser()).uid)
       .get({ source: 'server' }).pipe(
         map(snap => snap.data())

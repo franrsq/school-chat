@@ -8,6 +8,7 @@ import { IonicModule } from '@ionic/angular';
 import { ChatViewPageRoutingModule } from './chat-view-routing.module';
 
 import { ChatViewPage } from './chat-view.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
@@ -15,6 +16,7 @@ import { ChatViewPage } from './chat-view.page';
     FormsModule,
     IonicModule,
     ChatViewPageRoutingModule,
+    TranslateModule,
     AutosizeModule
   ],
   declarations: [ChatViewPage]

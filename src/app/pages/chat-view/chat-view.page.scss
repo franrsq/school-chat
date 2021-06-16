@@ -65,3 +65,8 @@ ion-textarea {
     width: 100%;
     max-height: 200px;
 }
+
+.btn-no-padding {
+    --padding-start: 0;
+    --padding-end: 0;
+}

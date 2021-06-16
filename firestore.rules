@@ -13,5 +13,9 @@ service cloud.firestore {
       allow read: if request.auth.uid != null;
       allow write: if false;
     }
+    match /admin-message/{group}/messages/{message} {
+      allow read: if request.auth.uid != null;
+      allow write: if false;
+    }
   }
 }

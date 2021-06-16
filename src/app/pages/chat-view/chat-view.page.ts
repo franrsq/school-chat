@@ -1,8 +1,10 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, ViewDidEnter, ViewWillEnter, ViewWillLeave, IonList, IonGrid } from '@ionic/angular';
+import { IonContent, ViewWillEnter, ViewWillLeave, IonList, IonGrid } from '@ionic/angular';
+import { finalize } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { FirestoreService } from 'src/app/services/firestore.service';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-chat-view',
@@ -15,31 +17,46 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
   chatData;
   onlyRead = false;
   messages = []
+  messagesSubscription;
+  isAdminView = false;
 
-  currentUid = 'simon'
+  currentUid = ''
   newMsg = ''
+  isTeacher;
   @ViewChild(IonContent) content: IonContent
 
   chatId;
+
+  percentageVal;
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private firestoreService: FirestoreService,
-    private authService: AuthService
+    private authService: AuthService,
+    private storageService: StorageService
   ) { }
 
   async ionViewWillEnter() {
     this.chatId = this.route.snapshot.paramMap.get('chatId');
     this.currentUid = (await this.authService.getCurrentUser()).uid;
+    this.isTeacher = (await this.authService.getUserData()).role == 'teacher';
     this.firestoreService.observeChatData(this.chatId).subscribe((chatData) => {
       this.chatData = chatData;
     });
-    this.firestoreService.observeChatMessages(this.chatId, false).subscribe(m => this.messages = m);
+    this.messagesSubscription = this.firestoreService.observeChatMessages(this.chatId, false)
+      .subscribe(m => this.messages = m);
   }
 
-  changePath(path) {
-    this.router.navigate([path]);
+  clickTodo() {
+    if (this.isTeacher) {
+      this.isAdminView = !this.isAdminView;
+      this.messagesSubscription.unsubscribe();
+      this.messagesSubscription = this.firestoreService.observeChatMessages(this.chatId, this.isAdminView)
+        .subscribe(m => this.messages = m);
+    } else {
+      // Navigate to todo view
+    }
   }
 
   sendMessage() {
@@ -47,8 +64,32 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
     if (message.length > 0) {
       this.newMsg = '';
     }
-    // TODO: ver admin
-    this.firestoreService.sendMessage(this.chatId, message).subscribe();
+    this.firestoreService.sendMessage(this.chatId, message, this.isAdminView).subscribe();
+  }
+
+  async onSendImage(event) {
+    const imgFile = event.target.files[0];
+    this.sendMediaMessage(imgFile, 'image');
+  }
+
+  async onSendVideo(event) {
+    const videoFile = event.target.files[0];
+    this.sendMediaMessage(videoFile, 'video');
+  }
+
+  sendMediaMessage(mediaFile, mediaType) {
+    const path = mediaType == 'image' ? 'images/' : 'videos/';
+    const filePath = this.storageService.generateFileName(path);
+    const fileRef = this.storageService.getRef(filePath);
+    const uploadTask = this.storageService.upload(filePath, mediaFile);
+    this.percentageVal = uploadTask.percentageChanges();
+    uploadTask.snapshotChanges().pipe(
+      finalize(async () => {
+        this.firestoreService.sendMessage(this.chatId, ' ', this.isAdminView,
+          await fileRef.getDownloadURL().toPromise(), mediaType).subscribe();
+        this.percentageVal = null;
+      })
+    ).subscribe();
   }
 
   ionViewWillLeave() {

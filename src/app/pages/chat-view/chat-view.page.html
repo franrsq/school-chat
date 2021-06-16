@@ -9,7 +9,7 @@
     <ion-title>{{chatData?.name}}</ion-title>
 
     <ion-buttons slot="end">
-      <ion-button (click)="changePath('to-do-list')">
+      <ion-button (click)="clickTodo()">
         <ion-icon name="checkbox-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -70,16 +70,34 @@
 
 <ng-template #canWrite>
   <ion-footer>
+    <div class="ion-padding-top" *ngIf="percentageVal | async as percentage">
+      <ion-label>{{ 'uploadingMedia' | translate }}</ion-label>
+      <ion-progress-bar value="{{ percentage / 100 }}"></ion-progress-bar>
+    </div>
     <ion-toolbar light="light">
       <ion-row align-items-center no-padding>
-        <ion-col size="10">
-          <textarea autosize maxRows="4" (keyup.enter)="sendMessage ()" [(ngModel)]="newMsg" class="message-input">
+        <ion-col size="9">
+          <textarea autosize maxRows="4" (keyup.enter)="sendMessage()" [(ngModel)]="newMsg" class="message-input">
           </textarea>
         </ion-col>
-        <ion-col size="2">
-          <ion-button expand="block" fill="clear" color="primary" [disabled]="newMsg === ''" class="msg-btn"
-            (click)="sendMessage()">
+        <ion-col size="1">
+          <ion-button expand="block" fill="clear" color="primary" class="btn-no-padding"
+            [disabled]="newMsg.trim() === ''" (click)="sendMessage()">
             <ion-icon name="send" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="1">
+          <input style="display:none;" type="file" accept="video/*" multiple="false" #chooseVideo
+            (change)="onSendVideo($event)" />
+          <ion-button expand="block" fill="clear" color="primary" class="btn-no-padding" (click)="chooseVideo.click()">
+            <ion-icon name="play-circle" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-col>
+        <ion-col size="1">
+          <input style="display:none;" type="file" accept="image/*" multiple="false" #chooseImage
+            (change)="onSendImage($event)" />
+          <ion-button expand="block" fill="clear" color="primary" class="btn-no-padding" (click)="chooseImage.click()">
+            <ion-icon name="image" slot="icon-only"></ion-icon>
           </ion-button>
         </ion-col>
       </ion-row>

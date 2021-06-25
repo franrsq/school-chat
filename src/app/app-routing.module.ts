@@ -43,8 +43,9 @@ const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'to-do-list',
-    loadChildren: () => import('./pages/to-do-list/to-do-list.module').then(m => m.ToDoListPageModule)
+    path: 'to-do-list/:chatId',
+    loadChildren: () => import('./pages/to-do-list/to-do-list.module').then(m => m.ToDoListPageModule),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'chat-view/:chatId',

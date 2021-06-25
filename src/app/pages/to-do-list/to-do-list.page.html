@@ -1,39 +1,45 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button (click)="changePath('home')">
+      <ion-button (click)="changePath('chat-view')">
         <ion-icon name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
 
-    <ion-title>{{nameGroup}}</ion-title>
+    <ion-title>{{chatData?.name}}</ion-title>
 
     <ion-buttons slot="end">
-      <ion-button (click)="changePath('chat-view')">
-        <ion-icon name="chatbubbles"></ion-icon>
+      <ion-button (click)="filterPopover()">
+        <ion-icon name="filter"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngIf="items.length > 0; else empty">
-    <ion-item *ngFor="let item of items">
-      <ng-container *ngIf="item">
-
-        <ion-label>
-          <ion-checkbox color="primary"></ion-checkbox>
-
-        </ion-label>
-        <ion-label>
-          <ion-text> {{item.message}} </ion-text>
-        </ion-label>
-
-      </ng-container>
-
-    </ion-item>
-  </ion-list>
-
+  <ion-grid *ngIf="messages.length > 0; else empty">
+    <ion-row *ngFor="let message of messages">
+      <ion-col size="9" class="message" (click)="messageClick(message)"
+        [ngClass]="{'marked-message': message.marked, 'unmarked-message': !message.marked}">
+        <b>{{ message.sentName }}</b>
+        <br>
+        <ng-container *ngIf="message.mediaURL && message.mediaType">
+          <ion-img class="image" *ngIf="message.mediaType === 'image'; else video" [src]="message.mediaURL">
+          </ion-img>
+          <ng-template #video>
+            <video controls class="video">
+              <source [src]="message.mediaURL">
+            </video>
+          </ng-template>
+          <br>
+        </ng-container>
+        <span>{{ message.message }}</span>
+        <div class="time" text-right> <br>
+          {{ message.sentAt.seconds * 1000 | date:'short' }}
+        </div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
   <ng-template #empty>
     <div style="display: flex; height: 100%; align-items: center;">
       <div class="viewCenter">
@@ -42,9 +48,7 @@
         </div>
 
         <div class="title-style">
-          No han mandado ningún mensaje
-          <br>
-          Espera a que el profesor envíe uno.
+          No hay ningún mensaje
         </div>
       </div>
     </div>

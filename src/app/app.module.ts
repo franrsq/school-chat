@@ -21,13 +21,14 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
+import { LetDirective } from './directives/let.directive';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
 }
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, LetDirective],
   entryComponents: [],
   imports: [
     BrowserModule,

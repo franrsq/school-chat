@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { map } from 'rxjs/operators';
+import { combineLatest, forkJoin } from 'rxjs';
+import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -61,9 +62,57 @@ export class FirestoreService {
       );
   }
 
+  async observeTodoMessages(chatId: string) {
+    const uid = (await this.authService.getCurrentUser()).uid;
+    return this.firestore.collection('admin-message').doc(chatId)
+      .collection('messages', ref => ref.orderBy('sentAt')).snapshotChanges()
+      .pipe(
+        switchMap((messages) => {
+          return combineLatest(
+            messages.map((data) => {
+              const message = data.payload.doc.data();
+              const id = data.payload.doc.id;
+              return combineLatest([this.getUserName(message.sentBy), this.observeMessageMarked(uid, chatId, id)])
+                .pipe(
+                  map(([name, marked]) => {
+                    return {
+                      sentName: name,
+                      messageId: id,
+                      ...message,
+                      marked: marked
+                    }
+                  })
+                );
+            })
+          );
+        })
+      );
+  }
+
+  observeMessageMarked(userId, chatId, messageId) {
+    return this.firestore.collection('to-do').doc(userId)
+      .collection('groups').doc(chatId).collection('messages').doc(messageId).valueChanges()
+      .pipe(
+        map((data) => {
+          if (!data) {
+            return false;
+          }
+          return data.marked;
+        })
+      );
+  }
+
   getUserName(uid) {
     return this.firestore.collection('users').doc(uid).get({ source: 'server' }).pipe(
       map((snap: any) => snap.data().name)
     );
+  }
+
+  markMessage(groupId: string, messageId: string) {
+    return this.functions.httpsCallable('markMessage')({ groupId: groupId, messageId: messageId });
+  }
+
+  unmarkMessage(groupId: string, messageId: string) {
+    return this.functions.httpsCallable('unmarkMessage')({ groupId: groupId, messageId: messageId });
   }
 }

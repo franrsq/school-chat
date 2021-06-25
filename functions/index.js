@@ -172,3 +172,50 @@ exports.sendAdminMessage = functions.https.onCall((data, context) => {
     });
   });
 });
+
+exports.markMessage = functions.https.onCall((data, context) => {
+  const groupId = data.groupId;
+  const messageId = data.messageId;
+
+  if ((!(typeof groupId === 'string') || groupId.length === 0) ||
+    (!(typeof messageId === 'string') || messageId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "userId", "groupId", "messageId".');
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  const todoRef = db.collection('to-do').doc(context.auth.uid)
+    .collection('groups').doc(groupId).collection('messages').doc(messageId);
+  const messageRef = db.collection('admin-message').doc(groupId).collection('messages').doc(messageId);
+  return db.runTransaction(async (transaction) => {
+    const messageDoc = await transaction.get(messageRef);
+    if (!messageDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Message document does not exists');
+    }
+
+    transaction.create(todoRef, {
+      marked: true
+    });
+  });
+});
+
+exports.unmarkMessage = functions.https.onCall((data, context) => {
+  const groupId = data.groupId;
+  const messageId = data.messageId;
+
+  if ((!(typeof groupId === 'string') || groupId.length === 0) ||
+    (!(typeof messageId === 'string') || messageId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "userId", "groupId", "messageId".');
+  }
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  return db.collection('to-do').doc(context.auth.uid)
+    .collection('groups').doc(groupId).collection('messages').doc(messageId).delete();
+});

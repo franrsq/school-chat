@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, ViewWillEnter, ViewWillLeave, IonList, IonGrid } from '@ionic/angular';
+import { IonContent, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { finalize } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 import { FirestoreService } from 'src/app/services/firestore.service';
@@ -55,7 +55,7 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
       this.messagesSubscription = this.firestoreService.observeChatMessages(this.chatId, this.isAdminView)
         .subscribe(m => this.messages = m);
     } else {
-      // Navigate to todo view
+      this.router.navigate(['to-do-list', this.chatId]);
     }
   }
 
@@ -95,5 +95,7 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
   ionViewWillLeave() {
     this.messages = null;
     this.currentUid = null;
+    this.messagesSubscription.unsubscribe();
+    this.messagesSubscription = null;
   }
 }

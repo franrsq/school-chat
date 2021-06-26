@@ -9,6 +9,8 @@ import { ChatViewPageRoutingModule } from './chat-view-routing.module';
 
 import { ChatViewPage } from './chat-view.page';
 import { TranslateModule } from '@ngx-translate/core';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
   imports: [
@@ -17,8 +19,10 @@ import { TranslateModule } from '@ngx-translate/core';
     IonicModule,
     ChatViewPageRoutingModule,
     TranslateModule,
-    AutosizeModule
+    AutosizeModule,
+    ClipboardModule
   ],
-  declarations: [ChatViewPage]
+  declarations: [ChatViewPage],
+  providers: [Clipboard]
 })
 export class ChatViewPageModule { }

@@ -1,0 +1,38 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Lista de espera</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngIf="users?.length > 0; else empty">
+    <ion-item *ngFor="let user of users">
+      <ion-avatar slot="start">
+        <ion-img [src]="user.image ? user.image : 'assets/images/def_avatar.svg'"></ion-img>
+      </ion-avatar>
+      <ion-label>{{user.name}}</ion-label>
+      <ion-button slot="end" fill="clear" color="success" (click)="clickAccept(user.uid)">
+        <ion-icon name="checkmark" slot="icon-only"></ion-icon>
+      </ion-button>
+      <ion-button slot="end" fill="clear" color="danger" (click)="clickReject(user.uid)">
+        <ion-icon name="close" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+
+  <ng-template #empty>
+    <div style="display: flex; height: 100%; align-items: center;">
+      <div class="viewCenter">
+        <div class="iconEmpty">
+          <ion-icon class="iconSize" name="cloud-offline-outline"></ion-icon>
+        </div>
+
+        <div class="title-style">
+          No hay ningún mensaje
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</ion-content>
+
+<ion-button expand="block" color="primary" (click)="dismiss()">Cerrar</ion-button>

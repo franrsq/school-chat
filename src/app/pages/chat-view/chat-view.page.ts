@@ -1,10 +1,14 @@
 import { Component, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonContent, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { Capacitor } from '@capacitor/core';
+import { IonContent, ModalController, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { finalize } from 'rxjs/operators';
+import { WaitingPage } from 'src/app/modals/waiting/waiting.page';
 import { AuthService } from 'src/app/services/auth.service';
 import { FirestoreService } from 'src/app/services/firestore.service';
 import { StorageService } from 'src/app/services/storage.service';
+import { ClipboardService } from 'ngx-clipboard';
+import { Clipboard } from '@ionic-native/clipboard/ngx';
 
 @Component({
   selector: 'app-chat-view',
@@ -13,7 +17,6 @@ import { StorageService } from 'src/app/services/storage.service';
 })
 export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
 
-  image = 'https://sevilla.abc.es/gurme/wp-content/uploads/sites/24/2012/01/comida-rapida-casera.jpg'
   chatData;
   onlyRead = false;
   messages = []
@@ -34,7 +37,11 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
     private route: ActivatedRoute,
     private firestoreService: FirestoreService,
     private authService: AuthService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private modalController: ModalController,
+    private clipboard: Clipboard,
+    private clipboardService: ClipboardService,
+    private toastController: ToastController
   ) { }
 
   async ionViewWillEnter() {
@@ -43,6 +50,7 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
     this.isTeacher = (await this.authService.getUserData()).role == 'teacher';
     this.firestoreService.observeChatData(this.chatId).subscribe((chatData) => {
       this.chatData = chatData;
+      this.isTeacher = this.isTeacher && this.chatData.admins.includes(this.currentUid);
     });
     this.messagesSubscription = this.firestoreService.observeChatMessages(this.chatId, false)
       .subscribe(m => this.messages = m);
@@ -90,6 +98,30 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
         this.percentageVal = null;
       })
     ).subscribe();
+  }
+
+  async clickCopy() {
+    if (Capacitor.isNative) {
+      this.clipboard.copy(this.chatId);
+    } else {
+      this.clipboardService.copy(this.chatId);
+    }
+    const toast = await this.toastController.create({
+      message: 'Código copiado',
+      duration: 2000,
+      color: "success"
+    });
+    toast.present();
+  }
+
+  async clickList() {
+    const modal = await this.modalController.create({
+      component: WaitingPage,
+      componentProps: {
+        'chatId': this.chatId
+      }
+    });
+    modal.present();
   }
 
   ionViewWillLeave() {

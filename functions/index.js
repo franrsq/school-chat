@@ -75,21 +75,14 @@ exports.joinChat = functions.https.onCall((data, context) => {
       throw 'User document does not exists!';
     }
 
-    let groups = userDoc.data().groups ? userDoc.data().groups : [];
-    if (groups.includes(chatId)) {
-      throw new functions.https.HttpsError('already-exists', 'You already are part of this group');
+    let waiting = groupDoc.data().waiting ? groupDoc.data().waiting : [];
+    if (waiting.includes(context.auth.uid)) {
+      throw new functions.https.HttpsError('already-exists', 'You already waiting for this group');
     }
-    groups.push(chatId);
-    transaction.update(userRef, { groups: groups });
-
-    let members = groupDoc.data().members ? groupDoc.data().members : [];
-    if (members.includes(context.auth.uid)) {
-      throw new functions.https.HttpsError('already-exists', 'You already are part of this group');
-    }
-    members.push(context.auth.uid);
-    transaction.update(groupRef, { members: members });
+    waiting.push(context.auth.uid);
+    transaction.update(groupRef, { waiting: waiting });
   })).then(() => {
-    console.log('User joined a group');
+    console.log('User joined waiting list for group');
     return {}
   }).catch((error) => {
     if (error instanceof functions.https.HttpsError) throw error;
@@ -218,4 +211,94 @@ exports.unmarkMessage = functions.https.onCall((data, context) => {
 
   return db.collection('to-do').doc(context.auth.uid)
     .collection('groups').doc(groupId).collection('messages').doc(messageId).delete();
+});
+
+exports.acceptUser = functions.https.onCall((data, context) => {
+  const uid = data.uid;
+  const groupId = data.groupId;
+
+  if ((!(typeof uid === 'string') || uid.length === 0) ||
+    (!(typeof groupId === 'string') || groupId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "uid" containing the uid of the user to accept and "groupId" the group to join.');
+  }
+
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  const userRef = db.collection('users').doc(uid);
+  const groupRef = db.collection('groups').doc(groupId);
+  return db.runTransaction(async (transaction) => {
+    const userDoc = await transaction.get(userRef);
+    if (!userDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'User document does not exists');
+    }
+
+    const groupDoc = await transaction.get(groupRef);
+    if (!groupDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Group document does not exists');
+    }
+
+    // Save group info to user
+    let groups = userDoc.data().groups ? userDoc.data().groups : [];
+    if (groups.includes(groupId)) {
+      throw new functions.https.HttpsError('already-exists', 'You already are part of this group');
+    }
+    groups.push(groupId);
+    transaction.update(userRef, { groups: groups });
+
+    // Save user info to the group
+    let members = groupDoc.data().members ? groupDoc.data().members : [];
+    if (members.includes(uid)) {
+      throw new functions.https.HttpsError('already-exists', 'You already meber of this group');
+    }
+    members.push(uid);
+    transaction.update(groupRef, { members: members });
+
+    // Remove user from the waiting list
+    if (groupDoc.data().waiting) {
+      let waiting = groupDoc.data().waiting;
+      waiting.splice(waiting.indexOf(uid), 1);
+      transaction.update(groupRef, { waiting: waiting })
+    }
+  });
+});
+
+exports.rejectUser = functions.https.onCall((data, context) => {
+  const uid = data.uid;
+  const groupId = data.groupId;
+
+  if ((!(typeof uid === 'string') || uid.length === 0) ||
+    (!(typeof groupId === 'string') || groupId.length === 0)) {
+    throw new functions.https.HttpsError('invalid-argument', 'The function must be called with ' +
+      'arguments "uid" containing the uid of the user to accept and "groupId" the group to join.');
+  }
+
+  if (!context.auth) {
+    throw new functions.https.HttpsError('failed-precondition', 'The function must be called ' +
+      'while authenticated.');
+  }
+
+  const userRef = db.collection('users').doc(uid);
+  const groupRef = db.collection('groups').doc(groupId);
+  return db.runTransaction(async (transaction) => {
+    const userDoc = await transaction.get(userRef);
+    if (!userDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'User document does not exists');
+    }
+
+    const groupDoc = await transaction.get(groupRef);
+    if (!groupDoc.exists) {
+      throw new functions.https.HttpsError('not-found', 'Group document does not exists');
+    }
+
+    // Remove user from the waiting list
+    if (groupDoc.data().waiting) {
+      let waiting = groupDoc.data().waiting;
+      waiting.splice(waiting.indexOf(uid), 1);
+      transaction.update(groupRef, { waiting: waiting })
+    }
+  });
 });

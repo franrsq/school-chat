@@ -52,6 +52,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/chat-view/chat-view.module').then(m => m.ChatViewPageModule),
     ...canActivate(redirectUnauthorizedToLogin)
   },
+  {
+    path: 'waiting',
+    loadChildren: () => import('./modals/waiting/waiting.module').then( m => m.WaitingPageModule)
+  },
+
 ];
 
 @NgModule({

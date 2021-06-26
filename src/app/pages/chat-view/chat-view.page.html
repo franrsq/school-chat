@@ -8,6 +8,12 @@
     <ion-title>{{chatData?.name}}</ion-title>
 
     <ion-buttons slot="end">
+      <ion-button (click)="clickCopy()" *ngIf="this.isTeacher">
+        <ion-icon name="copy-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="clickList()" *ngIf="this.isTeacher">
+        <ion-icon name="list-outline"></ion-icon>
+      </ion-button>
       <ion-button (click)="clickTodo()">
         <ion-icon name="checkbox-outline"></ion-icon>
       </ion-button>

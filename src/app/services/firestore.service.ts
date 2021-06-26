@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireFunctions } from '@angular/fire/functions';
-import { combineLatest, forkJoin } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { combineLatest, of } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -114,5 +114,35 @@ export class FirestoreService {
 
   unmarkMessage(groupId: string, messageId: string) {
     return this.functions.httpsCallable('unmarkMessage')({ groupId: groupId, messageId: messageId });
+  }
+
+  observeWaitingUsers(groupId: string) {
+    return this.firestore.collection('groups').doc(groupId).valueChanges().pipe(
+      switchMap((groupData: any) => {
+        if (groupData.waiting == null || groupData.waiting.length == 0) {
+          return of([]);
+        }
+        const list: [] = groupData.waiting.map(uid => {
+          return this.observeUserInfo(uid).pipe(
+            map((userInfo: any) => {
+              return { uid: uid, ...userInfo }
+            })
+          );
+        })
+        return combineLatest(list);
+      })
+    );
+  }
+
+  observeUserInfo(uid) {
+    return this.firestore.collection('users').doc(uid).valueChanges();
+  }
+
+  acceptUser(uid: string, groupId: string) {
+    return this.functions.httpsCallable('acceptUser')({ uid: uid, groupId: groupId });
+  }
+
+  rejectUser(uid: string, groupId: string) {
+    return this.functions.httpsCallable('rejectUser')({ uid: uid, groupId: groupId });
   }
 }

@@ -4,9 +4,7 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { WaitingPageRoutingModule } from './waiting-routing.module';
-
-import { WaitingPage } from './waiting.page';
+import { FilterComponent } from './filter.component';
 import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
@@ -14,9 +12,8 @@ import { TranslateModule } from '@ngx-translate/core';
     CommonModule,
     FormsModule,
     IonicModule,
-    WaitingPageRoutingModule,
     TranslateModule
   ],
-  declarations: [WaitingPage]
+  declarations: [FilterComponent]
 })
-export class WaitingPageModule {}
+export class FilterComponentModule { }

@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>Lista de espera</ion-title>
+    <ion-title>{{ 'waitingList' | translate }}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -28,11 +28,11 @@
         </div>
 
         <div class="title-style">
-          No hay ningún mensaje
+          {{ 'noWaiting' | translate }}
         </div>
       </div>
     </div>
   </ng-template>
 </ion-content>
 
-<ion-button expand="block" color="primary" (click)="dismiss()">Cerrar</ion-button>
+<ion-button expand="block" color="primary" (click)="dismiss()">{{ 'close' | translate }}</ion-button>

@@ -9,6 +9,7 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 import { StorageService } from 'src/app/services/storage.service';
 import { ClipboardService } from 'ngx-clipboard';
 import { Clipboard } from '@ionic-native/clipboard/ngx';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-chat-view',
@@ -41,7 +42,8 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
     private modalController: ModalController,
     private clipboard: Clipboard,
     private clipboardService: ClipboardService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private translateService: TranslateService
   ) { }
 
   async ionViewWillEnter() {
@@ -106,8 +108,9 @@ export class ChatViewPage implements ViewWillEnter, ViewWillLeave {
     } else {
       this.clipboardService.copy(this.chatId);
     }
+    const msg = await this.translateService.get('codeCopied').toPromise();
     const toast = await this.toastController.create({
-      message: 'Código copiado',
+      message: msg,
       duration: 2000,
       color: "success"
     });

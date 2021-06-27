@@ -44,8 +44,9 @@ export class SignUpPage implements OnInit {
   registerUser(data) {
     this.authService.signUp(data.email, data.password)
       .then(async () => {
+        const msg = await this.translateService.get('signUpSuccess').toPromise();
         const toast = await this.toastController.create({
-          message: 'Registro realizado exitosamente',
+          message: msg,
           duration: 2000,
           color: "success"
         });
@@ -70,8 +71,9 @@ export class SignUpPage implements OnInit {
     // TODO: check native google login error messages
     this.authService.googleAuth()
       .then(async () => {
+        const msg = await this.translateService.get('loginSuccess').toPromise();
         const toast = await this.toastController.create({
-          message: 'Inicio de sesión exitoso',
+          message: msg,
           duration: 2000,
           color: "success"
         });

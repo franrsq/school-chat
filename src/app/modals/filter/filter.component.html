@@ -1,13 +1,13 @@
 <ion-content>
   <ion-list>
     <ion-item (click)="showAll()">
-      Todos
+      {{ 'all' | translate }}
     </ion-item>
     <ion-item (click)="showPending()">
-      Pendientes
+      {{ 'pending' | translate }}
     </ion-item>
     <ion-item (click)="showCompleted()">
-      Completados
+      {{ 'completed' | translate }}
     </ion-item>
   </ion-list>
 </ion-content>

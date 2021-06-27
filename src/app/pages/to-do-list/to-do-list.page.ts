@@ -12,8 +12,7 @@ import { FirestoreService } from 'src/app/services/firestore.service';
 })
 export class ToDoListPage implements ViewWillEnter, ViewWillLeave {
 
-  nameGroup = "Nombre grupo";
-  //items: Observable<any>[] = [];
+  nameGroup = "";
   messages = [];
   chatId;
   chatData;

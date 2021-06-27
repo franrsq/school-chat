@@ -22,6 +22,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { ReactiveFormsModule } from '@angular/forms';
 import { GooglePlus } from '@ionic-native/google-plus/ngx';
 import { LetDirective } from './directives/let.directive';
+import { FilterComponentModule } from './modals/filter/filter.module';
 
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
@@ -40,6 +41,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AngularFireStorageModule,
     AngularFireFunctionsModule,
     HttpClientModule,
+    FilterComponentModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

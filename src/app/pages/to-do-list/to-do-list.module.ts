@@ -7,13 +7,15 @@ import { IonicModule } from '@ionic/angular';
 import { ToDoListPageRoutingModule } from './to-do-list-routing.module';
 
 import { ToDoListPage } from './to-do-list.page';
+import { TranslateModule } from '@ngx-translate/core';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    ToDoListPageRoutingModule
+    ToDoListPageRoutingModule,
+    TranslateModule
   ],
   declarations: [ToDoListPage]
 })

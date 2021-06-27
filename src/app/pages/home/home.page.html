@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Chats
+      {{ 'chatsTitle' | translate }}
     </ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="authService.logout()">
@@ -33,9 +33,9 @@
         </div>
 
         <div class="title-style">
-          No se ha unido a ningun chat.
+          {{ 'noChats' | translate }}
           <br>
-          Únete a uno.
+          {{ 'joinOne' | translate }}
         </div>
       </div>
     </div>

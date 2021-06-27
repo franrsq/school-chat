@@ -40,7 +40,7 @@
 
 <ion-row>
   <ion-col>
-    <ion-button expand="block" color="secondary" (click)="dismiss()">Volver</ion-button>
+    <ion-button expand="block" color="secondary" (click)="dismiss()">{{ 'goBack' | translate }}</ion-button>
   </ion-col>
   <ion-col>
     <ion-button expand="block" type="submit" [disabled]="!chatForm.valid" (click)="onSave(chatForm.value)">

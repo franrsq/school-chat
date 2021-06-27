@@ -17,6 +17,7 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
 
   items: Observable<any>;
   isTeacher;
+  userSubscription;
 
   constructor(private authService: AuthService, private modalController: ModalController,
     private alertController: AlertController, private firestoreService: FirestoreService,
@@ -24,7 +25,7 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
     private router: Router) { }
 
   async ionViewWillEnter() {
-    (await this.authService.observeUserData()).subscribe(async (data: any) => {
+    this.userSubscription = (await this.authService.observeUserData()).subscribe(async (data: any) => {
       if (!data) {
         const modal = await this.modalController.create({
           component: ProfilePage
@@ -53,28 +54,34 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
   }
 
   async showJoinChat() {
+    const header = await this.translateService.get('joinGroupHeader').toPromise();
+    const msg = await this.translateService.get('writeChatId').toPromise();
+    const placeHolder = await this.translateService.get('chatId').toPromise();
+    const cancel = await this.translateService.get('cancelText').toPromise();
+    const save = await this.translateService.get('save').toPromise();
+
     const alert = await this.alertController.create({
-      header: 'Unirse a un grupo',
-      message: "Escribe el id del chat",
+      header: header,
+      message: msg,
       backdropDismiss: false,
       inputs: [
         {
           name: 'chatId',
           type: 'text',
-          placeholder: 'Id del chat'
+          placeholder: placeHolder
         }
       ],
       buttons: [
         {
-          text: 'Cancelar',
+          text: cancel,
           role: 'cancel',
           cssClass: 'secondary'
         },
         {
-          text: 'Guardar',
+          text: save,
           handler: (data) => {
             if (!data.chatId) {
-              alert.message = 'Escribe el id del chat.';
+              alert.message = msg;
               return false;
             }
             this.joinChat(data.chatId.trim());
@@ -98,6 +105,7 @@ export class HomePage implements ViewWillEnter, ViewWillLeave {
   }
 
   ionViewWillLeave() {
+    this.userSubscription.unsubscribe();
     this.items = null;
   }
 }
